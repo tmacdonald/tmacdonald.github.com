@@ -6,4 +6,16 @@ permalink: /2012/09/backbone-subviews
 
 #Backbone Subviews
 
-This is going to be an article on how I structure my Backbone subviews
+Something I've noticed bouncing around the Backbone community these days is the idea of how to structure subviews. I'm going to outline here a basic example of how I look to include subviews.
+
+In this example, we have two Backbone Views: ParentView and ChildView.
+
+`
+var ParentView = Backbone.View.extend({
+	
+});
+
+var ChildView = Backbone.View.extend({
+	
+});
+`
