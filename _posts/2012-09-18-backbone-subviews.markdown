@@ -10,12 +10,10 @@ Something I've noticed bouncing around the Backbone community these days is the 
 
 In this example, we have two Backbone Views: ParentView and ChildView.
 
-`
-var ParentView = Backbone.View.extend({
-	
-});
+	var ParentView = Backbone.View.extend({
+		
+	});
 
-var ChildView = Backbone.View.extend({
-	
-});
-`
+	var ChildView = Backbone.View.extend({
+		
+	});
