@@ -86,7 +86,7 @@ In this approach I initialized the `ChildView` in the `ParentView`'s render func
 		}
 	});
 
-Something about initializing the `ChildView` outside of the `ParentView initialize` method didn't feel right. Also, re-rendering the `ParentView` would make it necessary to clean up after `this.childView`.
+Something about initializing the `ChildView` outside of the `ParentView initialize` method didn't feel right. Also, re-rendering the `ParentView` would make it necessary to clean up after `this.childView`. The other issue that may pop up is that we won't be able to use Backbone's `tagName` and `className` properties, as the `el` is being passed into the `ChildView`.
 
 ## Approach 2
 
