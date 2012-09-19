@@ -6,11 +6,11 @@ permalink: /2012/09/backbone-subviews
 
 #Backbone Subviews
 
-Something I've noticed bouncing around the Backbone community these days is the idea of how to structure subviews. I'm going to outline here a basic example of how I look to include subviews.
+Something I've noticed bouncing around the Backbone community these days is the idea of how to structure subviews. I'm going to outline some approaches for working with Backbone subviews as well as talk about the pros and cons of each.
 
 Note that I really haven't dug into some of the frameworks that claim to solve this problem, notably Backbone.LayoutManager from Tim Branyen.
 
-In this example, we have two Backbone Views: ParentView and ChildView.
+For all approaches, I'm going to work with a `ParentView` and `ChildView`.
 
 	var ParentView = Backbone.View.extend({
 		
@@ -20,7 +20,7 @@ In this example, we have two Backbone Views: ParentView and ChildView.
 		
 	});
 
-The ParentView and ChildView will have fairly simplistic templates
+The `ParentView` and `ChildView` will have the following templates:
 
 	<script type="text/template" id="parentTemplate">
 		<p>This is a parent</p>
@@ -31,11 +31,39 @@ The ParentView and ChildView will have fairly simplistic templates
 		<p>This is a child</p>
 	</script>
 
-The ChildView will simply render it's template into the default div element
+All approaches will also use a `Collection` class.
+
+	var Collection = Backbone.Collection.extend({
+
+	});
+
+## Approach 1
+
+I initialize the `ChildView` in the `ParentView`'s render function. The `ParentView` will create a `Collection` and pass it to the `ChildView` which will render on a `Collection reset` event.
+
+	var ParentView = Backbone.View.extend({
+		template: _.template($('#parentTemplate').html()),
+
+		initialize: function() {
+			this.collection = new Collection();
+		},
+
+		render: function() {
+			this.$el.html(this.template());
+
+			this.childView = new ChildView({el: this.$('#child'), collection: this.collection});
+
+			return this;	
+		}
+	});
 
 	var ChildView = Backbone.View.extend({
 
 		template: _.template($('#childTemplate').html()),
+
+		initialize: function() {
+			this.collection.on('reset', this.render, this);
+		},
 
 		render: function() {
 			this.$el.html(this.template());
@@ -43,69 +71,74 @@ The ChildView will simply render it's template into the default div element
 		}
 	});
 
-Now the `ParentView` will initialize the `ChildView` in it's initialize method, then render the `ChildView` in it's render method
+This approach more or less makes the assumption that the `ParentView`'s `render` method won't be called multiple times. Otherwise, the `render` method will need to ensure there is no memory leak concerning `this.childView`.
 
-	var ParentView = Backbone.View.extend({
-		template: _.template($('#parentTemplate').html()),
-
-		render: function() {
-			this.$el.html(this.template());
-
-			this.$('#child').html(this.childView.el);
-			this.childView.render();
-
-			return this;	
-		}
-	});
-
-I imagine at this point you're thinking, *this doesn't buy me anything*, and you're right. The next step is to notice that if `ChildView` becomes more advanced, say, it will render anytime a collection is reset, we would move the line
-
-			this.childView.render()
-
-from `ParentView` and add an initialize method to the `ChildView`
-
-		initialize: function() {
-			this.collection.on('reset', this.render, this);
-		}
-
-For some extra context, here were some other approaches I tried:
-
-## Approach 1
-
-In this approach I initialized the `ChildView` in the `ParentView`'s render function
-
-	var ParentView = Backbone.View.extend({
-		template: _.template($('#parentTemplate').html()),
-
-		render: function() {
-			this.$el.html(this.template());
-
-			this.childView = new ChildView({el: this.$('#child')});
-
-			return this;	
-		}
-	});
-
-Something about initializing the `ChildView` outside of the `ParentView initialize` method didn't feel right. Also, re-rendering the `ParentView` would make it necessary to clean up after `this.childView`. The other issue that may pop up is that we won't be able to use Backbone's `tagName` and `className` properties, as the `el` is being passed into the `ChildView`.
+This approach also prevents the `ChildView` from using the `Backbone.View` `tagName` or `className` properties.
 
 ## Approach 2
 
-In this approach, I initialized the `ChildView` in the `ParentView`'s initialize method, but render it differently
+In this approach, I initialize the `ChildView` in the `ParentView`'s initialize method, but render it differently.
 
 	var ParentView = Backbone.View.extend({
 		template: _.template($('#parentTemplate').html()),
 
 		initialize: function() {
+			
+			this.collection = new Collection();
+			this.collection.on('reset', this.renderCollection, this);
 			this.childView = new ChildView();
 		},
 
 		render: function() {
 			this.$el.html(this.template());
 
-			this.$('#child').html(this.childView.render().el);
+			this.renderCollection();
 
 			return this;
+		},
+
+		renderCollection: function() {
+			this.$('#child').html(this.childView.render().el);
 		}
 	});
 
-The problem here is that it keeps the `ChildView` from being able to render when a collection is reset, for example, without the `ParentView` knowing about the collection, which may be outside of its responsibilities.
+The big difference between Approach 1 and Approach 2 is that Approach 2 is using `ParentView` to set up the `reset` event handler. This seems like a disadvantage to me, as the rendering of the `ChildView` bleeds into the responsibilities of the `ParentView`.
+
+We are able to use `Backbone.View` `tagName` and `className` properties.
+
+##Approach 3
+
+The ChildView will simply render it's template into the default div element
+
+The `ParentView` will initialize the `ChildView` in it's initialize method, then let the `ChildView` handle its own rendering.
+
+	var ChildView = Backbone.View.extend({
+		template: _.teplate($('#childTemplate').html()),
+
+		initialize: function() {
+			this.collection.on('reset', this.render, this);
+		},
+
+		render: function() {
+			this.$el.html(this.template());
+		}
+	});
+
+	var ParentView = Backbone.View.extend({
+		template: _.template($('#parentTemplate').html()),
+
+		initialize: function() {
+			this.collection = new Collection();
+			this.childView = new ChildView({collection: collection});
+		}
+
+		render: function() {
+			this.$el.html(this.template());
+
+			this.$('#child').html(this.childView.el);
+
+			return this;	
+		}
+	});
+
+What I like about this approach is that the `ChildView` instance is initialized in the `ParentView` constructor, the `ChildView` is responsible for setting up the collection `reset` event handler and rendering itself, re-rendering the `ParentView` will not require clean-up code, and `Backbone.View` `tagName` and `className` properties are still usable from the `ChildView`
