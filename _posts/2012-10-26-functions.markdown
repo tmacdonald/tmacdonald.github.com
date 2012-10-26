@@ -11,13 +11,13 @@ I like to think of first-class objects as anything you can assign to a variable.
 
 Here's an example:
 
-  var func = function() {
-  };
+    var func = function() {
+    };
 
 This could also be written in a different form:
 
-  function func() {
-  }
+    function func() {
+    }
 
 Javascript has a typeof operator that will return to us the type of the variable as a string. It also has an instanceof operator that will return to us whether or not the variable is a certain given type. Both of the approaches from above will behave the same when using these operators.
 
