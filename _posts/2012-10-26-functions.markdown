@@ -39,6 +39,8 @@ The `Function` class provides some additional behaviours for functions themselve
 
 Most times, a variable is assigned a value and then passed to another function to be processed or returned from the function where it has been created.
 
+## Passing functions as parameters
+
 The classic example of passing a function as a parameter is a calculate function. This calculate function will take as parameters a binary math operator (such as addition or multiplication -- anything that takes two parameters and returns a single value) as well as two parameters (in this case numbers) that will be operated on.
 
     var add = function(x, y) {
@@ -64,6 +66,8 @@ Some examples of using this code:
 As an exercise, try adding multiplication and division operators and pass those to the calculate function. It may seem simple, but remember that the best way to learn is by doing.
 
 If you want a more advanced exercise, try rewriting the calculate function so that it will work with both binary operators and an operator called addThreeNumbers, which (you guessed it) returns the sum of three numeric parameters.
+
+## Returning functions
 
 Now that you've seen functions passed as parameters, I'll show you how to return functions. Let's say that we're writing a very basic math parser where the user passes a symbol string (such as '+' or '*') to a function called getOperator, which will return the appropriate operator. For now we're only going to support addition and subtraction.
 
