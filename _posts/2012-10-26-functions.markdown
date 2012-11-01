@@ -11,8 +11,10 @@ I like to think of first-class objects as anything you can assign to a variable.
 
 Here's an example:
 
-    var func = function() {
-    };
+```javascript
+var func = function() {
+};
+```
 
 This could also be written in a different form:
 
