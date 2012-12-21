@@ -1,5 +1,5 @@
 ---
-layout: post2
+layout: midnight
 title: Backbone Subviews
 permalink: /2012/09/backbone-subviews
 ---

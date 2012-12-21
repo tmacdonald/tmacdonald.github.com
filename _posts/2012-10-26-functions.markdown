@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: midnight
 title: Functions
 permalink: /2012/10/functions
 ---

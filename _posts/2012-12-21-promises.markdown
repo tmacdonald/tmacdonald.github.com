@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: midnight
 title: The Promise of Promises
 permalink: /2012/12/promises
 ---

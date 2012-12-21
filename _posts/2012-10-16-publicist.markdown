@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: midnight
 title: The Publicist
 permalink: /2012/10/publicist
 ---
