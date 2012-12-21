@@ -4,7 +4,7 @@ title: The Promise of Promises
 permalink: /2012/12/promises
 ---
 
-#The Promise (ugh) of Promises
+Ugh, sorry about that title
 
 ##Example 1
 {% highlight javascript %}

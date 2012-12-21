@@ -4,8 +4,6 @@ title: The Publicist
 permalink: /2012/10/publicist
 ---
 
-#The Publicist
-
 Today I thought I'd show you a little scenario that probably has no real-world application but provides a way to show some of the interesting features of Javascript. I'll take a look at object literals and the dynamic nature of the language.
 
 As much as you try to avoid it, our media is full of celebrity gossip. Just imagine being a Hollywood publicist trying to prevent your client from giving the tabloids front-page news.

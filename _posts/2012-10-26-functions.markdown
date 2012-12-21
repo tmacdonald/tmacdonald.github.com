@@ -4,8 +4,6 @@ title: Functions
 permalink: /2012/10/functions
 ---
 
-#Functions
-
 Many descriptions of Javascript describe functions as first-class objects. What does that mean?
 I like to think of first-class objects as anything you can assign to a variable. In many languages, such as Java, you cannot assign a function to a variable.
 
