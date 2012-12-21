@@ -6,5 +6,154 @@ permalink: /2012/12/promises
 
 #The Promise (ugh) of Promises
 
+##Example 1
+{% highlight javascript %}
+  var retrieveData = function() {
+    // produce data
+    return data;
+  };
 
+  var massageData = function(data) {
+    // massage data
+    return massagedData;
+  };
 
+  var renderData = function(data) {
+    // Render the data to screen
+  };
+
+  var data = retrieveData();
+  var massagedData = massageData(data);
+  renderData(massagedData);
+}
+{% endhighlight %}
+
+Above you see a fairly simple example with three functions and then some code that strings those functions together to retrieve, massage, and render data. This is all well and good so long as those functions are synchronous -- that is, the functions will block before returning a result. Of course, if we're using a library or our data has to be retrieve from across a network, those functions may end up being asynchronous.
+
+Let's also say, for whatever reason, that the massageData function is also asynchronous, because we have a massaging server. Hey, it could happen.
+
+##Example 2
+{% highlight javascript %}
+  var retrieveData = function(callback) {
+    // get data from network
+    callback(data);
+  };
+
+  var massageData = function(data, callback) {
+    // massage data
+    callback(massagedData);
+  };
+
+  var renderData = function(data) {
+    // Render the data to screen
+  };
+
+  retrieveData(function(data) {
+    massageData(data, function(massagedData) {
+      renderData(massageData);
+    });
+  })
+}
+{% endhighlight %}
+
+Ok, not so bad. Not great, and I think you might be able to imagine how this example could be stretched out with many steps and things would start to get ugly.
+
+Another way to get ugly is when we consider that any of these steps might fail. Asynchronous functions can't throw exceptions, because the calling code isn't around to handle them, so let's use an errorCallback to handle those errors.
+
+##Example 3
+{% highlight javascript %}
+  var retrieveData = function(successCallback, errorCallback) {
+    // produce data
+    if (error) {
+      errorCallback(error);
+    }
+    successCallback(data);
+  };
+
+  var massageData = function(data, successCallback, errorCallback) {
+    // massage data
+    if (error) {
+      errorCallback(error);
+    }
+    successCallback(massagedData);
+  };
+
+  var renderData = function(data) {
+    // Render the data to screen
+  };
+
+  var handleError = function(error) {
+    // do something with the error
+  };
+
+  retrieveData(function(data) {
+    massageData(data, function(massagedData) {
+      renderData(massagedData);
+    }, handleError);
+  }, handleError);
+}
+{% endhighlight %}
+
+Hopefully I have you on board that this is a problem. Now what can we do about it?
+
+Promises are objects that are returned from asynchronous (or synchronous) functions. The promise here is that they have one of three states: unresolved, resolved, or failed. The other thing they promise is that once the state changes from unresolved to resolved or unresolved to failed, that state will not change.
+
+How can we apply this to our example? We're going to use jQuery's version of promises. jQuery uses a Deferred object, which is a promise wrapped with the ability to resolve or fail the promise.
+
+Let's rewrite retrieveData from Example 2 with promises
+##Example 4
+{% highlight javascript %}
+  var retrieveData = function() {
+    var deferred = $.Deferred();
+    // produce data
+    deferred.resolve(data);
+    return deferred.promise();
+  };
+{% endhighlight %}
+
+To build up our use of promises, let's skip the step of massaging the data.
+##Example 5
+{% highlight javascript %}
+  var renderData = function(data) {
+    // Render the data to screen
+  };
+
+  retrieveData().then(renderData);
+}
+{% endhighlight %}
+
+What we're doing is attaching renderData to the promise returned by retrieveData. One of the features of promises is that if we attach a callback function to a promise after the promise is already resolved, it will still get called the the resolved data.
+
+Let's add massageData back in and see the real power of promises.
+
+##Example 6
+{% highlight javascript %}
+  var massageData = function(data) {
+    var deferred = $.Deferred();
+    // massage data over the network
+    deferred.resolve(massagedData);
+    return deferred.promise();
+  };
+
+  retrieveData()
+    .then(massageData)
+    .then(renderData);
+{% endhighlight %}
+
+We can actually chain our functions together. Here, retrieveData returns a promise. We attach massageData to that promise. This attachment, using then, returns another promise, which we then attach renderData to.
+
+Finally, we'll add error handling back in.
+
+##Example 7
+{% highlight javascript %}
+  var handleError = function(error) {
+    // do something with error
+  };
+
+  retrieveData()
+    .then(massageData, handleError)
+    .then(renderData, handleError);
+}
+{% endhighlight %}
+
+In my opinion, this is much easier to read. I will admit that there is a learning curve to understand promises, but hopefully this helped you to understand them a little bit.
