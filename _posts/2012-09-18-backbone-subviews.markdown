@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: post2
 title: Backbone Subviews
 permalink: /2012/09/backbone-subviews
 ---
@@ -24,7 +24,7 @@ For all approaches, I'm going to work with a `ParentView` and `ChildView`.
 
 The `ParentView` and `ChildView` will have the following templates:
 
-{% highlight html %}
+
   <script type="text/template" id="parentTemplate">
     <p>This is a parent</p>
     <div id="child"></div>
@@ -33,7 +33,6 @@ The `ParentView` and `ChildView` will have the following templates:
   <script type="text/template" id="childTemplate">
     <p>This is a child</p>
   </script>
-{% endhighlight %}
 
 All approaches will also use a `Collection` class.
 
