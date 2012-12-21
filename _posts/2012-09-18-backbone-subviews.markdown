@@ -14,11 +14,9 @@ For all approaches, I'm going to work with a `ParentView` and `ChildView`.
 
 {% highlight javascript %}
   var ParentView = Backbone.View.extend({
-
   });
 
   var ChildView = Backbone.View.extend({
-
   });
 {% endhighlight %}
 
@@ -38,7 +36,6 @@ All approaches will also use a `Collection` class.
 
 {% highlight javascript %}
   var Collection = Backbone.Collection.extend({
-
   });
 {% endhighlight %}
 
