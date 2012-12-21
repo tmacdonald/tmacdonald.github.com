@@ -13,6 +13,7 @@ As much as you try to avoid it, our media is full of celebrity gossip. Just imag
 In this scenario, there is a celebrity and a publicist.
 
   var celebrity = {};
+
   var publicist = {};
 
 Both `celebrity` and `publicist` are object literals, meaning that they are objects that have no associated class. These objects can have any number of properties and methods. Note that in javascript, object literal methods are really just properties that have been assigned a function.
@@ -47,11 +48,13 @@ The difference in this scenario is that the publicist has no control over the im
 
 I'll start with a naive approach to implementing `restrictClientActions`
 
+{% highlight javascript %}
   restrictActions = function(client) {
     client.exitLimousineWithoutShame = undefined;
     client.trashHotelRoom = undefined;
     return client;
   }
+{% endhighlight %}
 
 This does actually prevent anyone from calling these negative methods on the client. However, it modifies the existing client, and thinking you can change someone is probably not a realistic approach.
 
@@ -95,7 +98,7 @@ For instance:
     var restricted = {}, i;
     for (i = 0; i < approvedActions.length; i++) {
       var action = approvedActions[i];
-      
+
       restricted[action] = function() {
         return client[action].apply(client, arguments);
       };
@@ -104,12 +107,12 @@ For instance:
     return restricted;
   }
 
-This one is a little bit more complicated. First of all, I declare two variables: `restricted` and `i`. `restricted` will be the object that gets returned. `i` is a number iterator that will be used in the for loop. Next up is the loop itself. What this is doing is that for each string value in the approvedActions list, I'm going to add a property to the 
+This one is a little bit more complicated. First of all, I declare two variables: `restricted` and `i`. `restricted` will be the object that gets returned. `i` is a number iterator that will be used in the for loop. Next up is the loop itself. What this is doing is that for each string value in the approvedActions list, I'm going to add a property to the
 
 
   var wellBehavedCelebrity = publicist.restrictClientActions(celebrity);
   wellBehavedCelebrity.attendAuditionForBlockbusterMovie("Rochelle, Rochelle");
-  // output: Attended audition for Rochelle, Rochelle 
+  // output: Attended audition for Rochelle, Rochelle
   wellBehavedCelebrity.trashHotelRoom("The Ritz", 109);
   // output: TypeError: Object #<Object> has no method 'trashHotelRoom'
 
